@@ -1,3 +1,4 @@
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,7 +8,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 
-from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
@@ -17,7 +17,7 @@ from sklearn.tree import DecisionTreeClassifier
 # LOAD DATA
 # -------------------------------
 
-df = pd.read_csv('/content/cardio_train (1).csv', sep=';')
+df = pd.read_csv('/content/cardio_train_reduced.csv', sep=';')
 print("Original Shape:", df.shape)
 
 # -------------------------------
@@ -34,7 +34,10 @@ df = df[(df['weight'] > 30) & (df['weight'] < 200)]
 
 print("Cleaned Shape:", df.shape)
 
-# Feature Engineering
+# -------------------------------
+# FEATURE ENGINEERING
+# -------------------------------
+
 df['age_years'] = df['age'] / 365
 df['bmi'] = df['weight'] / ((df['height'] / 100) ** 2)
 df['pulse_pressure'] = df['ap_hi'] - df['ap_lo']
@@ -101,6 +104,7 @@ X_train, X_test, y_train, y_test = train_test_split(
 # -------------------------------
 
 scaler = StandardScaler()
+
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
@@ -109,11 +113,27 @@ X_test_scaled = scaler.transform(X_test)
 # -------------------------------
 
 models = {
-    "Logistic Regression": LogisticRegression(max_iter=1000, random_state=42),
-    "Random Forest": RandomForestClassifier(n_estimators=200, max_depth=10, random_state=42),
-    "SVM": SVC(kernel='rbf', probability=True, random_state=42),
-    "KNN": KNeighborsClassifier(n_neighbors=5, weights='distance'),
-    "Decision Tree": DecisionTreeClassifier(max_depth=6, random_state=42)
+    "Random Forest": RandomForestClassifier(
+        n_estimators=200,
+        max_depth=10,
+        random_state=42
+    ),
+
+    "SVM": SVC(
+        kernel='rbf',
+        probability=True,
+        random_state=42
+    ),
+
+    "KNN": KNeighborsClassifier(
+        n_neighbors=5,
+        weights='distance'
+    ),
+
+    "Decision Tree": DecisionTreeClassifier(
+        max_depth=6,
+        random_state=42
+    )
 }
 
 # -------------------------------
@@ -121,6 +141,7 @@ models = {
 # -------------------------------
 
 accuracies = {}
+predictions = {}
 
 print("\n=== MODEL RESULTS ===")
 
@@ -135,9 +156,10 @@ for name, model in models.items():
 
     acc = accuracy_score(y_test, pred)
     accuracies[name] = acc
+    predictions[name] = pred
 
     print(f"\n{name}")
-    print("Accuracy:", round(acc,4))
+    print("Accuracy:", round(acc, 4))
     print(classification_report(y_test, pred))
 
 # -------------------------------
@@ -156,15 +178,15 @@ plt.show()
 # -------------------------------
 
 best_model = max(accuracies, key=accuracies.get)
+best_pred = predictions[best_model]
+
 print("\nBest Model:", best_model)
 
 # -------------------------------
 # CONFUSION MATRIX
 # -------------------------------
 
-best_pred = pred  # last prediction (optional improvement: store separately)
-
-cm = confusion_matrix(y_test, pred)
+cm = confusion_matrix(y_test, best_pred)
 
 plt.figure()
 sns.heatmap(cm, annot=True, fmt='d')
@@ -178,14 +200,24 @@ plt.show()
 # -------------------------------
 
 rf = models["Random Forest"]
+
 importance = pd.DataFrame({
     'feature': features,
     'importance': rf.feature_importances_
-}).sort_values(by='importance', ascending=False)
+}).sort_values(
+    by='importance',
+    ascending=False
+)
 
 print("\nFeature Importance:\n", importance)
 
 plt.figure()
-sns.barplot(x='importance', y='feature', data=importance)
+sns.barplot(
+    x='importance',
+    y='feature',
+    data=importance
+)
+
 plt.title("Feature Importance - Random Forest")
 plt.show()
+
