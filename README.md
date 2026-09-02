@@ -36,15 +36,13 @@ The following models were implemented and compared:
 
 ## 📈 Results
 
-| Model                  | Accuracy |
-| ---------------------- | -------- |
-| Logistic Regression    | ~73–75%  |
-| Random Forest          | ~74–77%  |
-| Support Vector Machine | ~75–78%  |
-| K-Nearest Neighbors    | ~70–74%  |
-| Decision Tree          | ~68–72%  |
+| Model                  |    Accuracy |
+| ---------------------- | ----------: |
+| Random Forest          |   ~70–71%.  |
+| Support Vector Machine |   ~70–71%   |
+| K-Nearest Neighbors    |      ~66%.  |
+| Decision Tree          |      ~71%.  |
 
-✅ **Best Performing Model:** Support Vector Machine / Random Forest
 
 ---
 
