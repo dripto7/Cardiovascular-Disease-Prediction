@@ -26,7 +26,7 @@ This project aims to predict the presence of cardiovascular disease using machin
 
 The following models were implemented and compared:
 
-* Logistic Regression (LR)
+
 * Random Forest (RF)
 * Support Vector Machine (SVM)
 * K-Nearest Neighbors (KNN)
